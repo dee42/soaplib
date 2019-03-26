@@ -41,9 +41,9 @@ class TestPrimitive(unittest.TestCase):
         String.to_xml('value', ns_test, element)
         element=element[0]
         
-        self.assertEquals(element.text, 'value')
+        self.assertEqual(element.text, 'value')
         value = String.from_xml(element)
-        self.assertEquals(value, 'value')
+        self.assertEqual(value, 'value')
 
     def test_datetime(self):
         d = DateTime()
@@ -53,9 +53,9 @@ class TestPrimitive(unittest.TestCase):
         DateTime.to_xml(n, ns_test, element)
         element = element[0]
 
-        self.assertEquals(element.text, n.isoformat())
+        self.assertEqual(element.text, n.isoformat())
         dt = DateTime.from_xml(element)
-        self.assertEquals(n, dt)
+        self.assertEqual(n, dt)
 
     def test_utcdatetime(self):
         datestring = '2007-05-15T13:40:44Z'
@@ -64,9 +64,9 @@ class TestPrimitive(unittest.TestCase):
 
         dt = DateTime.from_xml(e)
 
-        self.assertEquals(dt.year, 2007)
-        self.assertEquals(dt.month, 5)
-        self.assertEquals(dt.day, 15)
+        self.assertEqual(dt.year, 2007)
+        self.assertEqual(dt.month, 5)
+        self.assertEqual(dt.day, 15)
 
         datestring = '2007-05-15T13:40:44.003Z'
         e = etree.Element('test')
@@ -74,9 +74,9 @@ class TestPrimitive(unittest.TestCase):
 
         dt = DateTime.from_xml(e)
 
-        self.assertEquals(dt.year, 2007)
-        self.assertEquals(dt.month, 5)
-        self.assertEquals(dt.day, 15)
+        self.assertEqual(dt.year, 2007)
+        self.assertEqual(dt.month, 5)
+        self.assertEqual(dt.day, 15)
 
     def test_integer(self):
         i = 12
@@ -86,10 +86,10 @@ class TestPrimitive(unittest.TestCase):
         Integer.to_xml(i, ns_test, element)
         element = element[0]
 
-        self.assertEquals(element.text, '12')
-        self.assertEquals('xs:integer', element.get('{%s}type' % soaplib.ns_xsi))
+        self.assertEqual(element.text, '12')
+        self.assertEqual('xs:integer', element.get('{%s}type' % soaplib.ns_xsi))
         value = integer.from_xml(element)
-        self.assertEquals(value, i)
+        self.assertEqual(value, i)
 
     def test_large_integer(self):
         i = 128375873458473
@@ -99,10 +99,10 @@ class TestPrimitive(unittest.TestCase):
         Integer.to_xml(i, ns_test, element)
         element = element[0]
 
-        self.assertEquals(element.text, '128375873458473')
-        self.assertEquals('xs:integer', element.get('{%s}type' % soaplib.ns_xsi))
+        self.assertEqual(element.text, '128375873458473')
+        self.assertEqual('xs:integer', element.get('{%s}type' % soaplib.ns_xsi))
         value = integer.from_xml(element)
-        self.assertEquals(value, i)
+        self.assertEqual(value, i)
 
     def test_float(self):
         f = 1.22255645
@@ -112,11 +112,11 @@ class TestPrimitive(unittest.TestCase):
         Float.to_xml(f, ns_test, element)
         element = element[0]
 
-        self.assertEquals(element.text, '1.22255645')
-        self.assertEquals('xs:float', element.get('{%s}type' % soaplib.ns_xsi))
+        self.assertEqual(element.text, '1.22255645')
+        self.assertEqual('xs:float', element.get('{%s}type' % soaplib.ns_xsi))
 
         f2 = Float.from_xml(element)
-        self.assertEquals(f2, f)
+        self.assertEqual(f2, f)
 
     def test_array(self):
         serializer = Array(String)
@@ -128,10 +128,10 @@ class TestPrimitive(unittest.TestCase):
         serializer.to_xml(values, ns_test, element)
         element = element[0]
 
-        self.assertEquals(len(values), len(element.getchildren()))
+        self.assertEqual(len(values), len(element.getchildren()))
 
         values2 = serializer.from_xml(element)
-        self.assertEquals(values[3], values2[3])
+        self.assertEqual(values[3], values2[3])
 
     def test_array_empty(self):
         serializer = Array(String)
@@ -143,19 +143,19 @@ class TestPrimitive(unittest.TestCase):
         serializer.to_xml(values, ns_test, element)
         element = element[0]
 
-        self.assertEquals(len(values), len(element.getchildren()))
+        self.assertEqual(len(values), len(element.getchildren()))
 
         values2 = serializer.from_xml(element)
-        self.assertEquals(len(values2), 0)
+        self.assertEqual(len(values2), 0)
 
     def test_unicode(self):
-        s = u'\x34\x55\x65\x34'
-        self.assertEquals(4, len(s))
+        s = '\x34\x55\x65\x34'
+        self.assertEqual(4, len(s))
         element = etree.Element('test')
         String.to_xml(s, 'test_ns', element)
         element = element[0]
         value = String.from_xml(element)
-        self.assertEquals(value, s)
+        self.assertEqual(value, s)
 
     def test_null(self):
         element = etree.Element('test')
@@ -163,47 +163,47 @@ class TestPrimitive(unittest.TestCase):
         element = element[0]
         self.assertTrue( bool(element.get('{%s}nil' % soaplib.ns_xsi)) )
         value = Null.from_xml(element)
-        self.assertEquals(None, value)
+        self.assertEqual(None, value)
 
     def test_boolean(self):
         b = etree.Element('test')
         Boolean.to_xml(True, ns_test, b)
         b = b[0]
-        self.assertEquals('true', b.text)
+        self.assertEqual('true', b.text)
 
         b = etree.Element('test')
         Boolean.to_xml(0, ns_test, b)
         b = b[0]
-        self.assertEquals('false', b.text)
+        self.assertEqual('false', b.text)
 
         b = etree.Element('test')
         Boolean.to_xml(1, ns_test, b)
         b = b[0]
-        self.assertEquals('true', b.text)
+        self.assertEqual('true', b.text)
 
         b = Boolean.from_xml(b)
-        self.assertEquals(b, True)
+        self.assertEqual(b, True)
 
         b = etree.Element('test')
         Boolean.to_xml(False, ns_test, b)
         b = b[0]
-        self.assertEquals('false', b.text)
+        self.assertEqual('false', b.text)
 
         b = Boolean.from_xml(b)
-        self.assertEquals(b, False)
+        self.assertEqual(b, False)
 
         b = etree.Element('test')
         Boolean.to_xml(False, ns_test, b)
         b = b[0]
-        self.assertEquals('xs:boolean', b.get('{%s}type' % soaplib.ns_xsi))
+        self.assertEqual('xs:boolean', b.get('{%s}type' % soaplib.ns_xsi))
 
         b = etree.Element('test')
         Boolean.to_xml(None, ns_test, b)
         b = b[0]
-        self.assertEquals('true', b.get('{%s}nil' % soaplib.ns_xsi))
+        self.assertEqual('true', b.get('{%s}nil' % soaplib.ns_xsi))
 
         b = Boolean.from_xml(b)
-        self.assertEquals(b, None)
+        self.assertEqual(b, None)
 
 if __name__ == '__main__':
     unittest.main()

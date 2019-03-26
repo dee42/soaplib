@@ -24,8 +24,8 @@ from soaplib.util.odict import odict
 def root_dict_to_etree(d):
     assert len(d) == 1
 
-    retval = etree.Element(d.keys()[0])
-    for val in d.values():
+    retval = etree.Element(list(d.keys())[0])
+    for val in list(d.values()):
         break
 
     if isinstance(val, dict) or isinstance(val, odict):
@@ -39,7 +39,7 @@ def root_dict_to_etree(d):
 def dict_to_etree(parent, d):
     """the dict values are either dicts or iterables"""
 
-    for k, v in d.items():
+    for k, v in list(d.items()):
         if len(v) == 0:
             etree.SubElement(parent,k)
 

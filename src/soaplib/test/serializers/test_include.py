@@ -18,7 +18,7 @@
 #
 
 import unittest
-from urllib import quote_plus
+from urllib.parse import quote_plus
 
 from lxml import etree
 
@@ -66,7 +66,7 @@ class TestInclude(unittest.TestCase):
         result = response.getchildren()[0]
         r = DownloadPartFileResult.from_xml(result)
 
-        self.assertEquals(payload, r.Data)
+        self.assertEqual(payload, r.Data)
 
 if __name__ == '__main__':
     unittest.main()

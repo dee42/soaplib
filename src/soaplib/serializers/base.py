@@ -38,7 +38,7 @@ def nillable_element(func):
     return wrapper
 
 def string_to_xml(cls, value, tns, parent_elt, name):
-    assert isinstance(value, str) or isinstance(value, unicode), "'value' must " \
+    assert isinstance(value, str) or isinstance(value, str), "'value' must " \
                     "be string or unicode. it is instead '%s'" % repr(value)
 
     element = etree.SubElement(parent_elt, "{%s}%s" % (tns,name))
@@ -131,7 +131,7 @@ class Base(object):
         if not ('_is_clone_of' in cls_dict):
             cls_dict['_is_clone_of'] = cls
 
-        for k,v in kwargs.items():
+        for k,v in list(kwargs.items()):
             setattr(Attributes,k,v)
 
         cls_dup = type(cls.__name__, cls.__bases__, cls_dict)

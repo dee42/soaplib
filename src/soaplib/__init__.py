@@ -46,7 +46,7 @@ nsmap = {
 }
 
 # prefix map
-prefmap = dict([(b,a) for a,b in nsmap.items()])
+prefmap = dict([(b,a) for a,b in list(nsmap.items())])
 
 const_prefmap = dict(prefmap)
 const_nsmap = dict(nsmap)
@@ -58,7 +58,7 @@ def get_namespace_prefix(ns):
     assert ns != "__main__"
     assert ns != "soaplib.serializers.base"
 
-    assert (isinstance(ns, str) or isinstance(ns, unicode)), ns
+    assert (isinstance(ns, str) or isinstance(ns, str)), ns
 
     if not (ns in prefmap):
         pref = "s%d" % _ns_counter

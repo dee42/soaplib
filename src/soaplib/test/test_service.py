@@ -132,7 +132,7 @@ class Test(unittest.TestCase):
 
     def test_portypes(self):
         porttype = self.wsdl.find('{http://schemas.xmlsoap.org/wsdl/}portType')
-        self.assertEquals(
+        self.assertEqual(
             len(self.srv.public_methods), len(porttype.getchildren()))
 
     def test_override_param_names(self):
@@ -145,16 +145,16 @@ class Test(unittest.TestCase):
         srv = MultipleReturnService()
         message = srv.public_methods[0].out_message()
 
-        self.assertEquals(len(message._type_info), 3)
+        self.assertEqual(len(message._type_info), 3)
 
         sent_xml = etree.Element('test')
         message.to_xml( ('a','b','c'), srv.get_tns(), sent_xml )
         sent_xml = sent_xml[0]
 
-        print etree.tostring(sent_xml, pretty_print=True)
+        print(etree.tostring(sent_xml, pretty_print=True))
         response_data = message.from_xml(sent_xml)
 
-        self.assertEquals(len(response_data), 3)
+        self.assertEqual(len(response_data), 3)
         self.assertEqual(response_data[0], 'a')
         self.assertEqual(response_data[1], 'b')
         self.assertEqual(response_data[2], 'c')

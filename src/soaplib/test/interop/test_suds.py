@@ -50,7 +50,7 @@ class TestSuds(unittest.TestCase):
         try:
             ret = self.client.service.non_nillable(non_nillable_class)
             raise Exception("must fail")
-        except WebFault, e:
+        except WebFault as e:
             pass
 
     def test_echo_integer_array(self):
@@ -67,27 +67,27 @@ class TestSuds(unittest.TestCase):
         ret = self.client.service.echo_in_header()
         self.client.set_options(soapheaders=None)
 
-        print ret
+        print(ret)
 
-        self.assertEquals(in_header.s, ret.s)
-        self.assertEquals(in_header.i, ret.i)
+        self.assertEqual(in_header.s, ret.s)
+        self.assertEqual(in_header.i, ret.i)
 
     def test_send_out_header(self):
         out_header = self.client.factory.create('OutHeader')
-        out_header.dt = datetime(year=2000, month=01, day=01)
+        out_header.dt = datetime(year=2000, month=0o1, day=0o1)
         out_header.f = 3.141592653
 
         ret = self.client.service.send_out_header()
 
         self.assertTrue(isinstance(ret,type(out_header)))
-        self.assertEquals(ret.dt, out_header.dt)
-        self.assertEquals(ret.f, out_header.f)
+        self.assertEqual(ret.dt, out_header.dt)
+        self.assertEqual(ret.f, out_header.f)
 
     def test_echo_string(self):
         test_string = "OK"
         ret = self.client.service.echo_string(test_string)
 
-        self.assertEquals(ret, test_string)
+        self.assertEqual(ret, test_string)
 
     def __get_xml_test_val(self):
         return {
@@ -113,13 +113,13 @@ class TestSuds(unittest.TestCase):
         val=self.__get_xml_test_val()
         ret = self.client.service.echo_any(val)
 
-        self.assertEquals(ret, val)
+        self.assertEqual(ret, val)
 
     def test_any_as_dict(self):
         val=self.__get_xml_test_val()
         ret = self.client.service.echo_any_as_dict(val)
 
-        self.assertEquals(ret, val)
+        self.assertEqual(ret, val)
 
     def test_echo_simple_class(self):
         val = self.client.factory.create("SimpleClass")
@@ -160,9 +160,9 @@ class TestSuds(unittest.TestCase):
 
 
 
-        self.assertEquals(ret.i, val.i)
+        self.assertEqual(ret.i, val.i)
         self.assertEqual(ret.ai[0], val.ai[0])
-        self.assertEquals(ret.simple.SimpleClass[0].s, val.simple.SimpleClass[0].s)
+        self.assertEqual(ret.simple.SimpleClass[0].s, val.simple.SimpleClass[0].s)
         self.assertEqual(ret.other.dt, val.other.dt)
 
 
@@ -190,31 +190,31 @@ class TestSuds(unittest.TestCase):
         val.other.b = True
 
         val.p = self.client.factory.create("{hunk.sunk}NonNillableClass");
-        val.p.dt = datetime(2010,06,02)
+        val.p.dt = datetime(2010,0o6,0o2)
         val.p.i = 123
         val.p.s = "punk"
 
-        val.l = datetime(2010,07,02)
+        val.l = datetime(2010,0o7,0o2)
         val.q = 5
 
         ret = self.client.service.echo_extension_class(val)
-        print ret
+        print(ret)
 
-        self.assertEquals(ret.i, val.i)
-        self.assertEquals(ret.s, val.s)
-        self.assertEquals(ret.f, val.f)
-        self.assertEquals(ret.simple.SimpleClass[0].i, val.simple.SimpleClass[0].i)
-        self.assertEquals(ret.other.dt, val.other.dt)
-        self.assertEquals(ret.p.s, val.p.s)
+        self.assertEqual(ret.i, val.i)
+        self.assertEqual(ret.s, val.s)
+        self.assertEqual(ret.f, val.f)
+        self.assertEqual(ret.simple.SimpleClass[0].i, val.simple.SimpleClass[0].i)
+        self.assertEqual(ret.other.dt, val.other.dt)
+        self.assertEqual(ret.p.s, val.p.s)
 
 
     def test_complex_return(self):
         ret = self.client.service.complex_return()
 
-        self.assertEquals(ret.resultCode, 1)
-        self.assertEquals(ret.resultDescription, "Test")
-        self.assertEquals(ret.transactionId, 123)
-        self.assertEquals(ret.roles.role[0], "MEMBER")
+        self.assertEqual(ret.resultCode, 1)
+        self.assertEqual(ret.resultDescription, "Test")
+        self.assertEqual(ret.transactionId, 123)
+        self.assertEqual(ret.roles.role[0], "MEMBER")
 
 if __name__ == '__main__':
     unittest.main()

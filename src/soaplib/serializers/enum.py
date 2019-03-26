@@ -1,10 +1,10 @@
 
 from lxml import etree
 
-from base import SimpleType
-from base import nillable_element
-from base import nillable_value
-from base import string_to_xml
+from .base import SimpleType
+from .base import nillable_element
+from .base import nillable_value
+from .base import string_to_xml
 
 import soaplib
 
@@ -60,7 +60,7 @@ def Enum(*values, **kwargs):
         def __invert__(self):
             return values[maximum - self.__value]
 
-        def __nonzero__(self):
+        def __bool__(self):
             return bool(self.__value)
 
         def __repr__(self):

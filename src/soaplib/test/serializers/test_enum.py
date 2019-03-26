@@ -60,24 +60,24 @@ class TestEnum(unittest.TestCase):
         elt = etree.fromstring(wsdl)
         simple_type = elt.xpath('//xs:simpleType', namespaces=soaplib.nsmap)[0]
 
-        print etree.tostring(elt, pretty_print=True)
-        print simple_type
+        print(etree.tostring(elt, pretty_print=True))
+        print(simple_type)
 
-        self.assertEquals(simple_type.attrib['name'], 'DaysOfWeekEnum')
-        self.assertEquals(simple_type[0].tag, "{%s}restriction" % soaplib.ns_xsd)
-        self.assertEquals([e.attrib['value'] for e in simple_type[0]], vals)
+        self.assertEqual(simple_type.attrib['name'], 'DaysOfWeekEnum')
+        self.assertEqual(simple_type[0].tag, "{%s}restriction" % soaplib.ns_xsd)
+        self.assertEqual([e.attrib['value'] for e in simple_type[0]], vals)
 
     def test_serialize(self):
         DaysOfWeekEnum.resolve_namespace(DaysOfWeekEnum, 'punk')
         mo = DaysOfWeekEnum.Monday
-        print repr(mo)
+        print(repr(mo))
 
         elt = etree.Element('test')
         DaysOfWeekEnum.to_xml(mo, 'test_namespace', elt)
         elt = elt[0]
         ret = DaysOfWeekEnum.from_xml(elt)
 
-        self.assertEquals(mo, ret)
+        self.assertEqual(mo, ret)
 
 if __name__ == '__main__':
     unittest.main()

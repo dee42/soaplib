@@ -54,8 +54,8 @@ class TestBinary(unittest.TestCase):
         Attachment.to_xml(a, ns_test, element)
         element = element[0]
         encoded_data = base64.encodestring(data)
-        self.assertNotEquals(element.text, None)
-        self.assertEquals(element.text, encoded_data)
+        self.assertNotEqual(element.text, None)
+        self.assertEqual(element.text, encoded_data)
 
     def test_to_xml_file(self):
         a = Attachment()
@@ -67,8 +67,8 @@ class TestBinary(unittest.TestCase):
         Attachment.to_xml(a, ns_test, element)
         element = element[0]
         encoded_data = base64.encodestring(data)
-        self.assertNotEquals(element.text, None)
-        self.assertEquals(element.text, encoded_data)
+        self.assertNotEqual(element.text, None)
+        self.assertEqual(element.text, encoded_data)
 
     def test_to_from_xml_file(self):
         a = Attachment()
@@ -83,7 +83,7 @@ class TestBinary(unittest.TestCase):
         fdata = f.read()
         f.close()
 
-        self.assertEquals(data, fdata)
+        self.assertEqual(data, fdata)
 
     def test_exception(self):
         try:
@@ -105,16 +105,16 @@ class TestBinary(unittest.TestCase):
         element = element[0]
         a2 = Attachment.from_xml(element)
 
-        self.assertEquals(data, a2.data)
+        self.assertEqual(data, a2.data)
 
     def test_add_to_schema(self):
         schema = {}
         Attachment.add_to_schema(schema)
-        self.assertEquals(0, len(schema.keys()))
+        self.assertEqual(0, len(list(schema.keys())))
 
     def test_get_datatype(self):
         dt = Attachment.get_type_name()
-        self.assertEquals('base64Binary', dt)
+        self.assertEqual('base64Binary', dt)
 
         dt = Attachment.get_namespace()
         assert dt == soaplib.ns_xsd

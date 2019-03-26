@@ -18,9 +18,9 @@
 #
 
 import sys
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import soaplib
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from lxml import etree
 
@@ -28,7 +28,7 @@ def create_relates_to_header(relatesTo, attrs={}):
     '''Creates a 'relatesTo' header for async callbacks'''
     relatesToElement = etree.Element(
         '{%s}RelatesTo' % soaplib.ns_wsa)
-    for k, v in attrs.items():
+    for k, v in list(attrs.items()):
         relatesToElement.set(k, v)
     relatesToElement.text = relatesTo
     return relatesToElement
@@ -81,8 +81,8 @@ def get_relates_to_info(request):
 
 def split_url(url):
     '''Splits a url into (uri_scheme, host[:port], path)'''
-    scheme, remainder = urllib.splittype(url)
-    host, path = urllib.splithost(remainder)
+    scheme, remainder = urllib.parse.splittype(url)
+    host, path = urllib.parse.splithost(remainder)
     return scheme.lower(), host, path
 
 def reconstruct_url(environ):
@@ -110,18 +110,18 @@ def reconstruct_url(environ):
             if environ['SERVER_PORT'] != '80':
                 url += ':' + environ['SERVER_PORT']
 
-    if (urllib.quote(environ.get('SCRIPT_NAME', '')) == '/' and
-        urllib.quote(environ.get('PATH_INFO', ''))[0:1] == '/'):
+    if (urllib.parse.quote(environ.get('SCRIPT_NAME', '')) == '/' and
+        urllib.parse.quote(environ.get('PATH_INFO', ''))[0:1] == '/'):
         #skip this if it is only a slash
         pass
 
-    elif urllib.quote(environ.get('SCRIPT_NAME', ''))[0:2] == '//':
-        url += urllib.quote(environ.get('SCRIPT_NAME', ''))[1:]
+    elif urllib.parse.quote(environ.get('SCRIPT_NAME', ''))[0:2] == '//':
+        url += urllib.parse.quote(environ.get('SCRIPT_NAME', ''))[1:]
 
     else:
-        url += urllib.quote(environ.get('SCRIPT_NAME', ''))
+        url += urllib.parse.quote(environ.get('SCRIPT_NAME', ''))
 
-    url += urllib.quote(environ.get('PATH_INFO', ''))
+    url += urllib.parse.quote(environ.get('PATH_INFO', ''))
     if environ.get('QUERY_STRING'):
         url += '?' + environ['QUERY_STRING']
 

@@ -142,11 +142,11 @@ class Application(object):
                                         soaplib.get_namespace_prefix(namespace))
 
             # append element tags
-            for node in schema_entries.namespaces[pref].elements.values():
+            for node in list(schema_entries.namespaces[pref].elements.values()):
                 schema.append(node)
 
             # append simpleType and complexType tags
-            for node in schema_entries.namespaces[pref].types.values():
+            for node in list(schema_entries.namespaces[pref].types.values()):
                 schema.append(node)
 
         return schema_nodes
@@ -337,17 +337,17 @@ class Application(object):
             self.on_wsdl(req_env, self.__wsdl) # implementation hook
 
             http_resp_headers['Content-Length'] = str(len(self.__wsdl))
-            start_response(HTTP_200, http_resp_headers.items())
+            start_response(HTTP_200, list(http_resp_headers.items()))
 
             return [self.__wsdl]
 
-        except Exception, e:
+        except Exception as e:
             logger.error(traceback.format_exc())
 
             # implementation hook
             self.on_wsdl_exception(req_env, e)
 
-            start_response(HTTP_500, http_resp_headers.items())
+            start_response(HTTP_500, list(http_resp_headers.items()))
 
             return [""]
 
@@ -421,7 +421,7 @@ class Application(object):
 
             if req_env['REQUEST_METHOD'].lower() != 'post':
                 http_resp_headers['Allow'] = 'POST'
-                start_response(HTTP_405, http_resp_headers.items())
+                start_response(HTTP_405, list(http_resp_headers.items()))
                 return ['']
 
             input = req_env.get('wsgi.input')
@@ -439,7 +439,7 @@ class Application(object):
                 if method_name is None:
                     resp = "Could not extract method name from the request!"
                     http_resp_headers['Content-Length'] = str(len(resp))
-                    start_response(HTTP_500, http_resp_headers.items())
+                    start_response(HTTP_500, list(http_resp_headers.items()))
                     return [resp]
 
                 service_class = self.get_service_class(method_name)
@@ -452,7 +452,7 @@ class Application(object):
                     try:
                         logger.debug(etree.tostring(etree.fromstring(body),
                                                              pretty_print=True))
-                    except etree.XMLSyntaxError,e:
+                    except etree.XMLSyntaxError as e:
                         logger.debug(body)
                         raise Fault('Client.XMLSyntax', 'Error at line: %d, col: %d'
                                                                     % e.position)
@@ -519,11 +519,11 @@ class Application(object):
 
             if len(out_type) > 0:
                 if len(out_type) == 1:
-                    attr_name = descriptor.out_message._type_info.keys()[0]
+                    attr_name = list(descriptor.out_message._type_info.keys())[0]
                     setattr(result_message, attr_name, result_raw)
                 else:
                     for i in range(len(out_type)):
-                        attr_name = descriptor.out_message._type_info.keys()[i]
+                        attr_name = list(descriptor.out_message._type_info.keys())[i]
                         setattr(result_message, attr_name, result_raw[i])
 
             # transform the results into an element
@@ -549,7 +549,7 @@ class Application(object):
 
             # initiate the response
             http_resp_headers['Content-Length'] = str(len(results_str))
-            start_response(HTTP_200, http_resp_headers.items())
+            start_response(HTTP_200, list(http_resp_headers.items()))
 
             if logger.level == logging.DEBUG:
                 logger.debug('\033[91m'+ "Response" + '\033[0m')
@@ -560,11 +560,11 @@ class Application(object):
             return [results_str]
 
         # The user issued a Fault, so handle it just like an exception!
-        except Fault, e:
+        except Fault as e:
             return self.__handle_fault(req_env, start_response,
                                                 http_resp_headers, service, e)
 
-        except Exception, e:
+        except Exception as e:
             fault = Fault('Server', str(e))
 
             return self.__handle_fault(req_env, start_response,
@@ -596,7 +596,7 @@ class Application(object):
         # initiate the response
         fault_str = etree.tostring(envelope)
         http_resp_headers['Content-Length'] = str(len(fault_str))
-        start_response(HTTP_500, http_resp_headers.items())
+        start_response(HTTP_500, list(http_resp_headers.items()))
 
         return [fault_str]
 
@@ -691,7 +691,7 @@ class ValidatingApplication(Application):
             tmp_dir_name = tempfile.mkdtemp()
 
             # serialize nodes to files
-            for k,v in schema_nodes.items():
+            for k,v in list(schema_nodes.items()):
                 file_name = '%s/%s.xsd' % (tmp_dir_name, k)
                 f = open(file_name, 'w')
                 etree.ElementTree(v).write(f, pretty_print=True)

@@ -59,14 +59,14 @@ class ClassSerializerMeta(type(Base)):
                         if len(base_types) > 0 and issubclass(b, Base):
                             cls_dict["__extends__"] = extends = b
                     except:
-                        print extends
+                        print(extends)
                         raise
 
         # populate soap members
         if not ('_type_info' in cls_dict):
             cls_dict['_type_info'] = _type_info = TypeInfo()
 
-            for k,v in cls_dict.items():
+            for k,v in list(cls_dict.items()):
                 if not k.startswith('__'):
                     subc = False
                     try:
@@ -110,14 +110,14 @@ class ClassSerializerBase(NonExtendingClass, Base):
         if not (extends is None):
             self.__reset_members(extends, kwargs)
 
-        for k in cls._type_info.keys():
+        for k in list(cls._type_info.keys()):
             setattr(self, k, kwargs.get(k, None))
 
     def __len__(self):
         return len(self._type_info)
 
     def __getitem__(self,i):
-        return getattr(self, self._type_info.keys()[i], None)
+        return getattr(self, list(self._type_info.keys())[i], None)
 
     @classmethod
     def get_serialization_instance(cls, value):
@@ -131,7 +131,7 @@ class ClassSerializerBase(NonExtendingClass, Base):
 
             inst = cls()
 
-            keys = cls._type_info.keys()
+            keys = list(cls._type_info.keys())
             for i in range(len(value)):
                 setattr(inst, keys[i], value[i])
 
@@ -156,7 +156,7 @@ class ClassSerializerBase(NonExtendingClass, Base):
         if not (parent_cls is None):
             parent_cls.get_members(inst, parent)
 
-        for k, v in cls._type_info.items():
+        for k, v in list(cls._type_info.items()):
             mo = v.Attributes.max_occurs
             subvalue = getattr(inst, k, None)
 
@@ -222,7 +222,7 @@ class ClassSerializerBase(NonExtendingClass, Base):
 
         Base.resolve_namespace(cls, default_ns)
 
-        for k, v in cls._type_info.items():
+        for k, v in list(cls._type_info.items()):
             if v.__type_name__ is Base.Empty:
                 v.__namespace__ = cls.get_namespace()
                 v.__type_name__ = "%s_%sType" % (cls.get_type_name(), k)
@@ -233,7 +233,7 @@ class ClassSerializerBase(NonExtendingClass, Base):
     @classmethod
     def add_to_schema(cls, schema_entries):
         if cls.get_type_name() is Base.Empty:
-            (child,) = cls._type_info.values()
+            (child,) = list(cls._type_info.values())
             cls.__type_name__ = '%sArray' % child.get_type_name()
 
         if not schema_entries.has_class(cls):
@@ -257,7 +257,7 @@ class ClassSerializerBase(NonExtendingClass, Base):
             sequence = etree.SubElement(sequence_parent, '{%s}sequence' %
                                                                 soaplib.ns_xsd)
 
-            for k, v in cls._type_info.items():
+            for k, v in list(cls._type_info.items()):
                 if v != cls:
                     v.add_to_schema(schema_entries)
 
@@ -298,7 +298,7 @@ class ClassSerializerBase(NonExtendingClass, Base):
 
         return ClassSerializerMeta(type_name, (ClassSerializer,), cls_dict)
 
-class ClassSerializer(ClassSerializerBase):
+class ClassSerializer(ClassSerializerBase, metaclass=ClassSerializerMeta):
     """
     The general complexType factory. The __call__ method of this class will
     return instances, contrary to primivites where the same call will result in
@@ -306,8 +306,6 @@ class ClassSerializer(ClassSerializerBase):
     Those who'd like to customize the class should use the customize method.
     (see soaplib.serializers.base.Base)
     """
-
-    __metaclass__ = ClassSerializerMeta
 
 class Array(ClassSerializer):
     def __new__(cls, serializer, ** kwargs):
@@ -337,7 +335,7 @@ class Array(ClassSerializer):
     # namespace.
     @staticmethod
     def resolve_namespace(cls, default_ns):
-        (serializer,) = cls._type_info.values()
+        (serializer,) = list(cls._type_info.values())
 
         serializer.resolve_namespace(serializer, default_ns)
 
@@ -353,7 +351,7 @@ class Array(ClassSerializer):
     def get_serialization_instance(cls, value):
         inst = ClassSerializer.__new__(Array)
 
-        (member_name,) = cls._type_info.keys()
+        (member_name,) = list(cls._type_info.keys())
         setattr(inst, member_name, value)
 
         return inst
@@ -362,7 +360,7 @@ class Array(ClassSerializer):
     @nillable_element
     def from_xml(cls, element):
         retval = []
-        (serializer,) = cls._type_info.values()
+        (serializer,) = list(cls._type_info.values())
 
         for child in element.getchildren():
             retval.append(serializer.from_xml(child))

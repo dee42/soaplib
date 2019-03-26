@@ -18,7 +18,7 @@
 #
 
 import base64
-import cStringIO
+import io
 
 from soaplib.serializers.base import Base
 from soaplib.serializers import nillable_value, nillable_element
@@ -84,7 +84,7 @@ class Attachment(Base):
         elif value.file_name:
             # the data hasn't been loaded, but a file has been
             # specified
-            data_string = cStringIO.StringIO()
+            data_string = io.StringIO()
 
             file_name = value.file_name
             file = open(file_name, 'rb')

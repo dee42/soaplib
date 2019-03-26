@@ -53,7 +53,7 @@ _type_map = {
 def parse_cls_dict(cls_dict):
     cls_dict["_type_info"] = _type_info = TypeInfo()
 
-    for k, v in cls_dict.items():
+    for k, v in list(cls_dict.items()):
         if not k.startswith('__'):
             if isinstance(v, Column):
                 if v.type in _type_map:
@@ -76,6 +76,5 @@ class TableSerializerMeta(DeclarativeMeta):
 
         return DeclarativeMeta.__new__(cls, cls_name, cls_bases, cls_dict)
 
-class TableSerializer(ClassSerializerBase):
-    __metaclass__ = TableSerializerMeta
+class TableSerializer(ClassSerializerBase, metaclass=TableSerializerMeta):
     _decl_class_registry={}

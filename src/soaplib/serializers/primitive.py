@@ -53,7 +53,7 @@ class Any(SimpleType):
     @classmethod
     @nillable_value
     def to_xml(cls, value, tns, parent_elt, name='retval'):
-        if isinstance(value, str) or isinstance(value, unicode):
+        if isinstance(value, str) or isinstance(value, str):
             value = etree.fromstring(value)
 
         e = etree.SubElement(parent_elt, '{%s}%s' % (tns,name))
@@ -136,8 +136,8 @@ class String(SimpleType):
     @classmethod
     @nillable_value
     def to_xml(cls, value, tns, parent_elt, name='retval'):
-        if not isinstance(value, unicode):
-            value = unicode(value, string_encoding)
+        if not isinstance(value, str):
+            value = str(value, string_encoding)
 
         string_to_xml(cls, value, tns, parent_elt, name)
 
@@ -175,7 +175,7 @@ class Integer(Decimal):
         try:
             return int(i)
         except:
-            return long(i)
+            return int(i)
 
 class Date(SimpleType):
     @classmethod
@@ -230,7 +230,7 @@ class DateTime(SimpleType):
 
         match = _offset_re.match(text)
         if match:
-            tz_hr, tz_min = [int(match.group(x)) for x in "tz_hr", "tz_min"]
+            tz_hr, tz_min = [int(match.group(x)) for x in ("tz_hr", "tz_min")]
             return parse_date(match, tz=FixedOffset(tz_hr * 60 + tz_min, {}))
 
         match = _local_re.match(text)

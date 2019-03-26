@@ -58,7 +58,7 @@ class odict(object):
         return (what in self.__dict)
 
     def __repr__(self):
-        return "{%s}" % ','.join(["%r: %r" % (k,v) for k,v in self.items()])
+        return "{%s}" % ','.join(["%r: %r" % (k,v) for k,v in list(self.items())])
 
     def __str__(self):
         return repr(self)
@@ -87,7 +87,7 @@ class odict(object):
 
     def update(self, data):
         if isinstance(data, dict):
-            data = data.items()
+            data = list(data.items())
 
         for k,v in data:
             self[k] = v

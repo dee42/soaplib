@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 from lxml import etree
 
 from base64 import b64encode
-from urllib import unquote
+from urllib.parse import unquote
 
 # import email data format related stuff
 try:
@@ -78,7 +78,7 @@ def from_soap(xml_string, http_charset):
     '''
     try:
         root, xmlids = etree.XMLID(xml_string.decode(http_charset))
-    except ValueError,e:
+    except ValueError as e:
         logger.debug('%s -- falling back to str decoding.' % (e))
         root, xmlids = etree.XMLID(xml_string)
 
@@ -117,7 +117,7 @@ def resolve_hrefs(element, xmlids):
             resolve_hrefs(resolved_element, xmlids)
 
             # copies the attributes
-            [e.set(k, v) for k, v in resolved_element.items()]
+            [e.set(k, v) for k, v in list(resolved_element.items())]
 
             # copies the children
             [e.append(child) for child in resolved_element.getchildren()]
@@ -300,7 +300,7 @@ def apply_mtom(headers, envelope, params, paramvals):
 
     # Get additional parameters from original Content-Type
     ctarray = []
-    for n, v in headers.items():
+    for n, v in list(headers.items()):
         if n.lower() == 'content-type':
             ctarray = v.split(';')
             break
@@ -333,7 +333,7 @@ def apply_mtom(headers, envelope, params, paramvals):
 
     rootpkg.add_header('Content-ID', '<soaplibEnvelope>')
 
-    for n, v in rootparams.items():
+    for n, v in list(rootparams.items()):
         rootpkg.set_param(n, v)
 
     rootpkg.set_param('type', roottype)
@@ -386,7 +386,7 @@ def apply_mtom(headers, envelope, params, paramvals):
 
     # extract dictionary of headers from MIMEMultipart message
     mtomheaders = {}
-    for name, value in mtompkg.items():
+    for name, value in list(mtompkg.items()):
         mtomheaders[name] = value
 
     if len(mtompkg.get_payload()) <= 1:
