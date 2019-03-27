@@ -693,7 +693,7 @@ class ValidatingApplication(Application):
             # serialize nodes to files
             for k,v in list(schema_nodes.items()):
                 file_name = '%s/%s.xsd' % (tmp_dir_name, k)
-                f = open(file_name, 'w')
+                f = open(file_name, 'wb')
                 etree.ElementTree(v).write(f, pretty_print=True)
                 f.close()
                 logger.debug("writing %r for ns %s" % (file_name,
