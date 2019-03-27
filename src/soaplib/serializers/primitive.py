@@ -32,6 +32,9 @@ from soaplib.serializers import string_to_xml
 from soaplib.util.etreeconv import etree_to_dict
 from soaplib.util.etreeconv import dict_to_etree
 
+import sys
+PY3 = sys.version_info.major > 2
+
 string_encoding = 'utf-8'
 
 _date_pattern = r'(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})'
@@ -147,7 +150,7 @@ class String(SimpleType):
         u = element.text or ""
         try:
             u = str(u)
-            return u.encode(string_encoding)
+            return u if PY3 else u.encode(string_encoding)
 
         except:
             return u
