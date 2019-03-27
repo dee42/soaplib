@@ -61,9 +61,7 @@ class TestSuds(unittest.TestCase):
     def test_echo_in_header(self):
         in_header = self.client.default_factory.InHeader(s='a', i=3)
 
-        ret = self.client.service.echo_in_header(_soapheaders=[in_header])
-
-        print(ret)
+        ret = self.client.service.echo_in_header(_soapheaders=[in_header]).body.echo_in_headerResult
 
         self.assertEqual(in_header.s, ret.s)
         self.assertEqual(in_header.i, ret.i)
@@ -71,7 +69,7 @@ class TestSuds(unittest.TestCase):
     def test_send_out_header(self):
         out_header = self.client.default_factory.OutHeader(dt=datetime(year=2000, month=0o1, day=0o1), f= 3.141592653)
 
-        ret = self.client.service.send_out_header()
+        ret = self.client.service.send_out_header().body.send_out_headerResult
 
         self.assertTrue(isinstance(ret,type(out_header)))
         self.assertEqual(ret.dt, out_header.dt)
@@ -145,9 +143,8 @@ class TestSuds(unittest.TestCase):
         ret = self.client.service.echo_nested_class(val)
 
 
-
         self.assertEqual(ret.i, val.i)
-        self.assertEqual(ret.ai[0], val.ai[0])
+        self.assertEqual(ret.ai.integer[0], val.ai.integer[0])
         self.assertEqual(ret.simple.SimpleClass[0].s, val.simple.SimpleClass[0].s)
         self.assertEqual(ret.other.dt, val.other.dt)
 
@@ -179,7 +176,6 @@ class TestSuds(unittest.TestCase):
         val.q = 5
 
         ret = self.client.service.echo_extension_class(val)
-        print(ret)
 
         self.assertEqual(ret.i, val.i)
         self.assertEqual(ret.s, val.s)
