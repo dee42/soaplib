@@ -136,8 +136,8 @@ class Test(unittest.TestCase):
             len(self.srv.public_methods), len(porttype.getchildren()))
 
     def test_override_param_names(self):
-        for n in ['self', 'import', 'return', 'from']:
-            self.assertTrue(n in self._wsdl, '"%s" not in self._wsdl' % n)
+        for n in [b'self', b'import', b'return', b'from']:
+            self.assertTrue(n in self._wsdl, '"%s" not in self._wsdl' % n.decode('ascii'))
 
     def test_multiple_return(self):
         app = wsgi.Application([MultipleReturnService], 'tns')
