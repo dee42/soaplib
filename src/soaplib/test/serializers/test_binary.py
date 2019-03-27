@@ -53,7 +53,7 @@ class TestBinary(unittest.TestCase):
         element = etree.Element('test')
         Attachment.to_xml(a, ns_test, element)
         element = element[0]
-        encoded_data = base64.encodestring(data)
+        encoded_data = base64.encodebytes(data.encode('utf-8')).decode('ascii')
         self.assertNotEqual(element.text, None)
         self.assertEqual(element.text, encoded_data)
 
@@ -66,7 +66,7 @@ class TestBinary(unittest.TestCase):
         element = etree.Element('test')
         Attachment.to_xml(a, ns_test, element)
         element = element[0]
-        encoded_data = base64.encodestring(data)
+        encoded_data = base64.encodebytes(data).decode('ascii')
         self.assertNotEqual(element.text, None)
         self.assertEqual(element.text, encoded_data)
 
@@ -79,7 +79,7 @@ class TestBinary(unittest.TestCase):
 
         data = Attachment.from_xml(element).data
 
-        f = open(self.tmpfile, 'rb')
+        f = open(self.tmpfile, 'r')
         fdata = f.read()
         f.close()
 

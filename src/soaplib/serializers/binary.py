@@ -19,11 +19,14 @@
 
 import base64
 import io
+import sys
 
 from soaplib.serializers.base import Base
 from soaplib.serializers import nillable_value, nillable_element
 
 from lxml import etree
+
+PY3 = sys.version_info.major > 2
 
 class Attachment(Base):
     __type_name__ = 'base64Binary'
@@ -79,12 +82,16 @@ class Attachment(Base):
         if value.data:
             # the data has already been loaded, just encode
             # and return the element
-            element.text = base64.encodestring(value.data)
+            if PY3 and isinstance(value.data, str):
+                data = value.data.encode('utf-8')
+            else:
+                data = value.data
+            element.text = base64.encodebytes(data)
 
         elif value.file_name:
             # the data hasn't been loaded, but a file has been
             # specified
-            data_string = io.StringIO()
+            data_string = io.BytesIO()
 
             file_name = value.file_name
             file = open(file_name, 'rb')
@@ -93,7 +100,7 @@ class Attachment(Base):
 
             # go back to the begining of the data
             data_string.seek(0)
-            element.text = str(data_string.read())
+            element.text = bytes(data_string.read())
 
         else:
             raise Exception("Neither data nor a file_name has been specified")
@@ -105,6 +112,10 @@ class Attachment(Base):
         This method returns an Attachment object that contains
         the base64 decoded string of the text of the given element
         '''
-        data = base64.decodestring(element.text)
-        a = Attachment(data=data)
+        if PY3 and isinstance(element.text, str):
+            data = element.text.encode('utf-8')
+        else:
+            data = element.text
+        data = base64.decodebytes(data)
+        a = Attachment(data=data.decode('utf-8'))
         return a
