@@ -39,6 +39,9 @@ except ImportError:
 
 from email import message_from_string
 
+import sys
+PY3 = sys.version_info.major > 2
+
 # import soaplib stuff
 from soaplib.serializers.binary import Attachment
 from soaplib.serializers.clazz import ClassSerializer
@@ -77,7 +80,12 @@ def from_soap(xml_string, http_charset):
     Parses the xml string into the header and payload
     '''
     try:
-        root, xmlids = etree.XMLID(xml_string.decode(http_charset))
+        if not PY3 or isinstance(xml_string, bytes):
+            xml_string = xml_string.decode(http_charset)
+        if PY3:
+            # PY3 lxml requires bytes when there's a charset declaration
+            xml_string = xml_string.encode(http_charset)
+        root, xmlids = etree.XMLID(xml_string)
     except ValueError as e:
         logger.debug('%s -- falling back to str decoding.' % (e))
         root, xmlids = etree.XMLID(xml_string)
