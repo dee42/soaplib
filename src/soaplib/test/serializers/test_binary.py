@@ -79,8 +79,8 @@ class TestBinary(unittest.TestCase):
 
         data = Attachment.from_xml(element).data
 
-        f = open(self.tmpfile, 'r')
-        fdata = f.read()
+        f = open(self.tmpfile, 'rb')
+        fdata = f.read().decode('ascii')
         f.close()
 
         self.assertEqual(data, fdata)
